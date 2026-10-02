@@ -1,0 +1,13 @@
+{
+  "name": "campushub-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {"dev": "node --watch server.js", "start": "node server.js", "test": "node --test"},
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.57.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0"
+  }
+}
