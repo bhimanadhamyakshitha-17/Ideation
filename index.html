@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusHub - Academic & Student Collaboration Network</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col overflow-hidden">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main App Wrapper -->
+    <div id="app" class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- ================= LOGIN / LANDING VIEW ================= -->
+        <div id="login-view" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 overflow-y-auto">
+            <div class="max-w-md w-full bg-slate-900/90 border border-slate-700/80 rounded-3xl shadow-2xl p-8 backdrop-blur-xl">
+                
+                <!-- Logo & Brand Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white shadow-xl shadow-indigo-500/30 mb-4 ring-4 ring-indigo-500/20">
+                        <i class="fa-solid fa-graduation-cap text-4xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-black text-white tracking-tight">CampusHub</h1>
+                    <p class="text-xs text-indigo-300 font-medium mt-1 uppercase tracking-widest">Academic & Student Collaboration Network</p>
+                </div>
+
+                <!-- Role Selection Tabs -->
+                <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-800/80 rounded-2xl mb-6 border border-slate-700">
+                    <button type="button" id="tab-login-student" onclick="switchLoginRole('student')" class="py-2.5 text-xs font-bold rounded-xl transition-all bg-indigo-600 text-white shadow-md">
+                        <i class="fa-solid fa-user-graduate mr-1.5"></i> Student Portal
+                    </button>
+                    <button type="button" id="tab-login-manager" onclick="switchLoginRole('manager')" class="py-2.5 text-xs font-bold rounded-xl transition-all text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-user-shield mr-1.5"></i> Management
+                    </button>
+                </div>
+
+                <!-- Quick Demo Login Buttons -->
+                <div class="space-y-3 mb-6">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">Quick Demo Login</p>
+                    <button type="button" onclick="quickDemoLogin('student')" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-white transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold text-xs text-indigo-200">Rahul Sharma (Student)</p>
+                                <p class="text-[10px] text-slate-400">Full Stack & AI/ML • 3 Hackathons</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-indigo-400 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                    
+                    <button type="button" onclick="quickDemoLogin('manager')" class="w-full flex items-center justify-between p-3.5 rounded-2xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-white transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-purple-600/30 text-purple-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold text-xs text-indigo-200">Dr. Helen Vance (Management)</p>
+                                <p class="text-[10px] text-slate-400">Faculty Coordinator & Admin</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-400 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+
+                <div class="relative flex py-2 items-center mb-4">
+                    <div class="flex-grow border-t border-slate-700"></div>
+                    <span class="flex-shrink mx-4 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Or Custom Sign In</span>
+                    <div class="flex-grow border-t border-slate-700"></div>
+                </div>
+
+                <!-- Custom Login Form -->
+                <form onsubmit="handleCustomLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Your Full Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-user text-xs"></i>
+                            </span>
+                            <input type="text" id="login-name-input" required placeholder="e.g. Priya Nair" class="w-full pl-10 pr-3 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div id="student-extra-fields">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Primary Domain</label>
+                                <select id="login-domain-input" class="w-full px-3 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+                                    <option value="Full Stack">Full Stack</option>
+                                    <option value="AI/ML">AI / ML</option>
+                                    <option value="Web3">Web3</option>
+                                    <option value="Mobile">Mobile Apps</option>
+                                    <option value="Cybersecurity">Cybersecurity</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Hackathon Experience</label>
+                                <select id="login-exp-input" class="w-full px-3 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+                                    <option value="Beginner (0-1 Hackathons)">Beginner (0-1)</option>
+                                    <option value="Intermediate (2-4 Hackathons)">Intermediate (2-4)</option>
+                                    <option value="Expert (5+ Hackathons)">Expert (5+)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span id="login-btn-text">Sign In as Student</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= MAIN APP DASHBOARD VIEW ================= -->
+        <div id="main-app-view" class="hidden flex-1 flex flex-col h-full overflow-hidden">
+            
+            <!-- Top Navbar -->
+            <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0 z-20 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 font-bold text-lg">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-slate-900 text-lg tracking-tight">CampusHub</span>
+                            <span id="header-role-badge" class="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase tracking-wider">Student Portal</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 hidden sm:block">Academic Ecosystem & Peer Learning Network</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (Dynamic based on role) -->
+                <nav id="nav-tabs-container" class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <!-- Rendered dynamically -->
+                </nav>
+
+                <!-- User Profile & Sign Out Button -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 bg-slate-50 px-3 py-1.5 rounded-2xl border border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs" id="user-avatar-initials">RS</div>
+                        <div class="text-left hidden sm:block">
+                            <p id="header-user-name" class="text-xs font-bold text-slate-900">Rahul Sharma</p>
+                            <p id="header-user-subtitle" class="text-[10px] text-indigo-600 font-semibold">Student • Full Stack</p>
+                        </div>
+                    </div>
+
+                    <button onclick="logout()" title="Sign Out of CampusHub" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-rose-200">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">Sign Out</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dynamic Page Body -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50">
+                
+                <!-- ================= STUDENT: DASHBOARD ================= -->
+                <div id="page-student-dashboard" class="page-view max-w-7xl mx-auto space-y-6">
+                    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                            <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider rounded-full border border-indigo-500/30">Student Dashboard</span>
+                            <h2 class="text-2xl md:text-3xl font-black mt-2">Welcome back, <span id="dash-welcome-name">Rahul</span>! 👋</h2>
+                            <p class="text-slate-300 text-xs md:text-sm mt-1 max-w-2xl">Explore hackathons, share your latest project experience with peers, chat with the AI Mentor, or request guidance from faculty professors.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="switchTab('student-community')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square"></i> Share Work
+                            </button>
+                            <button onclick="switchTab('student-ai')" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-robot"></i> Ask AI Mentor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Metric Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold text-slate-500">Active Hackathons</p>
+                                <p class="text-xl font-black text-slate-800">4 Events Live</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-share-nodes"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold text-slate-500">Community Posts</p>
+                                <p id="stat-post-count" class="text-xl font-black text-slate-800">12 Shared</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold text-slate-500">Active Peers</p>
+                                <p class="text-xl font-black text-slate-800">142 Students</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold text-slate-500">Professor Help</p>
+                                <p id="stat-req-count" class="text-xl font-black text-slate-800">0 Pending</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Highlights Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-fire text-amber-500 mr-2"></i>Featured Hackathons</h3>
+                                <button onclick="switchTab('student-hackathons')" class="text-xs font-bold text-indigo-600 hover:underline">View All</button>
+                            </div>
+                            <div id="dash-hackathons-preview" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-robot"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900 text-sm">Gemini AI Academic Mentor</h4>
+                                        <p class="text-[10px] text-slate-500">Instant Doubt Clearing & Guidance</p>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 mb-4">Stuck on a bug, need architectural advice for your hackathon project, or want to polish your pitch? Ask our AI mentor right now.</p>
+                            </div>
+                            <button onclick="switchTab('student-ai')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-comments"></i> Open AI Chatroom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= STUDENT: HACKATHONS ================= -->
+                <div id="page-student-hackathons" class="page-view hidden max-w-7xl mx-auto space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-slate-900">Upcoming Campus & Global Hackathons</h3>
+                            <p class="text-xs text-slate-500">Register with your team, build innovative solutions, and win exciting cash prizes and mentorship.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="hackathon-search" oninput="filterHackathons()" placeholder="Search hackathons..." class="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="hackathons-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- ================= STUDENT: COMMUNITY WORK FEED ================= -->
+                <div id="page-student-community" class="page-view hidden max-w-4xl mx-auto space-y-6">
+                    <!-- Share Work Form -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-600"></i> Share Your Work, Project, or Experience
+                        </h3>
+                        <form onsubmit="submitCommunityPost(event)" class="space-y-4">
+                            <div>
+                                <input type="text" id="post-title" required placeholder="Project Title / Hackathon Name (e.g., EcoRoute - AI Traffic Optimizer)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <textarea id="post-content" required rows="3" placeholder="Describe what you built, technologies used, key challenges overcome, and takeaways for fellow students..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"></textarea>
+                            </div>
+                            <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600">Domain:</label>
+                                    <select id="post-domain" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none">
+                                        <option value="Full Stack">Full Stack</option>
+                                        <option value="AI/ML">AI / ML</option>
+                                        <option value="Web3">Web3</option>
+                                        <option value="Mobile">Mobile Apps</option>
+                                        <option value="Cybersecurity">Cybersecurity</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Publish to Feed
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Feed Filter Bar -->
+                    <div class="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-700">Filter Feed:</span>
+                            <select id="feed-filter-domain" onchange="renderCommunityFeed()" class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none">
+                                <option value="All">All Domains</option>
+                                <option value="Full Stack">Full Stack</option>
+                                <option value="AI/ML">AI / ML</option>
+                                <option value="Web3">Web3</option>
+                                <option value="Mobile">Mobile Apps</option>
+                                <option value="Cybersecurity">Cybersecurity</option>
+                            </select>
+                        </div>
+                        <span id="feed-count-indicator" class="text-xs font-bold text-indigo-600">12 Posts</span>
+                    </div>
+
+                    <!-- Feed Posts Container -->
+                    <div id="community-feed-container" class="space-y-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- ================= STUDENT: PEER DIRECTORY ================= -->
+                <div id="page-student-directory" class="page-view hidden max-w-7xl mx-auto space-y-6">
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-slate-900">Student Peer Directory & Categorization</h3>
+                                <p class="text-xs text-slate-500">Students are categorized according to their hackathon work experience and respective technical domains.</p>
+                            </div>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                <select id="dir-filter-exp" onchange="renderDirectory()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700">
+                                    <option value="All">All Experience Levels</option>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="student-directory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= STUDENT: AI CHATBOT ================= -->
+                <div id="page-student-ai" class="page-view hidden max-w-4xl mx-auto h-[620px] flex flex-col bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-purple-500/30">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm flex items-center gap-2">
+                                    Gemini AI Academic Mentor 
+                                    <span class="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-[9px] font-bold uppercase rounded-full border border-purple-500/30">Active</span>
+                                </h4>
+                                <p class="text-[11px] text-purple-300">Ask coding doubts, hackathon strategies, or project architecture advice</p>
+                            </div>
+                        </div>
+                        <button onclick="clearAIChat()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Reset Chat
+                        </button>
+                    </div>
+
+                    <!-- Chat Messages Box -->
+                    <div id="ai-chat-messages" class="flex-1 p-5 overflow-y-auto space-y-4 bg-slate-50/50">
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-xs max-w-xl shadow-2xs text-xs text-slate-800 leading-relaxed">
+                                Hello! I am your Gemini AI academic mentor on CampusHub. How can I assist you with your hackathon project, programming assignment, or technical doubt today?
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Prompts -->
+                    <div class="px-4 py-2 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto">
+                        <button onclick="sendPresetPrompt('How can I structure a winning hackathon pitch in 3 minutes?')" class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-[11px] font-semibold whitespace-nowrap transition-all border border-purple-200">
+                            💡 Pitch structure tips
+                        </button>
+                        <button onclick="sendPresetPrompt('Explain how React state management works with an example.')" class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-[11px] font-semibold whitespace-nowrap transition-all border border-purple-200">
+                            ⚡ React State Guide
+                        </button>
+                        <button onclick="sendPresetPrompt('What are the best open-source AI models for local hackathon deployment?')" class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-[11px] font-semibold whitespace-nowrap transition-all border border-purple-200">
+                            🤖 AI Models for Hackathons
+                        </button>
+                    </div>
+
+                    <!-- Chat Input Form -->
+                    <form onsubmit="handleAIChatSubmit(event)" class="p-3 bg-white border-t border-slate-200 flex gap-2">
+                        <input type="text" id="ai-user-input" required placeholder="Ask Gemini AI anything..." class="flex-1 px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-purple-500">
+                        <button type="submit" class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md">
+                            <span>Send</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ================= STUDENT: PROFESSOR REQUESTS ================= -->
+                <div id="page-student-professors" class="page-view hidden max-w-5xl mx-auto space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Request Form -->
+                        <div class="md:col-span-1 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                            <h3 class="font-extrabold text-slate-900 text-base mb-1">Request Professor Guidance</h3>
+                            <p class="text-xs text-slate-500 mb-4">Submit a formal request to campus management to get matched with an available faculty mentor.</p>
+                            
+                            <form onsubmit="submitProfessorRequest(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Project / Research Topic</label>
+                                    <input type="text" id="prof-req-topic" required placeholder="e.g. LLM fine-tuning for healthcare" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Detailed Help Needed</label>
+                                    <textarea id="prof-req-details" required rows="4" placeholder="Explain your project scope and what guidance you need..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all shadow-md">
+                                    Submit Request to Management
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Requests Status List -->
+                        <div class="md:col-span-2 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col">
+                            <h3 class="font-extrabold text-slate-900 text-base mb-1">Your Submitted Requests</h3>
+                            <p class="text-xs text-slate-500 mb-4">Management reviews these requests and assigns available professors.</p>
+                            
+                            <div id="student-prof-requests-list" class="flex-1 space-y-3 overflow-y-auto">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= MANAGEMENT: DASHBOARD & WORK MONITOR ================= -->
+                <div id="page-manager-dashboard" class="page-view hidden max-w-7xl mx-auto space-y-6">
+                    <div class="bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider rounded-full border border-purple-500/30">Management Portal</span>
+                            <h2 class="text-2xl md:text-3xl font-black mt-2">Faculty & Admin Control Center</h2>
+                            <p class="text-slate-300 text-xs md:text-sm mt-1">Monitor student work activity, review hackathon participation, and assign available professors to student guidance requests.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/15 text-center">
+                                <p class="text-[10px] text-purple-200 font-semibold uppercase tracking-wider">Pending Help Requests</p>
+                                <p id="mgmt-stat-pending" class="text-2xl font-black">2</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Management Tabs Navigation -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column: Professor Request Fulfillment -->
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1 flex items-center gap-2">
+                                <i class="fa-solid fa-user-tie text-indigo-600"></i> Professor Help Requests Queue
+                            </h3>
+                            <p class="text-xs text-slate-500 mb-4">Assign available faculty members to student project requests.</p>
+                            
+                            <div id="mgmt-prof-requests-list" class="space-y-3">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Student Work & Project Monitor -->
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1 flex items-center gap-2">
+                                <i class="fa-solid fa-laptop-code text-purple-600"></i> Student Work & Project Activity Monitor
+                            </h3>
+                            <p class="text-xs text-slate-500 mb-4">Review all shared work experiences and ideas published by students.</p>
+                            
+                            <div id="mgmt-student-posts-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        /* ================= STATE & DATA ================= */
+        let currentUser = null; // { name, role: 'student'|'manager', domain, experience }
+
+        let hackathonsData = [
+            { id: 1, title: 'CampusAI Hackathon 2026', desc: 'Build generative AI applications solving campus challenges.', date: 'Oct 25-27, 2026', prize: '$5,000', domain: 'AI/ML', registered: 42 },
+            { id: 2, title: 'Web3 Decentralized Campus Cup', desc: 'Create smart contracts for academic credential verification.', date: 'Nov 10-12, 2026', prize: '$3,500', domain: 'Web3', registered: 28 },
+            { id: 3, title: 'Full Stack Sprint 2026', desc: 'Rapid SaaS prototyping with React and Node.js.', date: 'Dec 01-03, 2026', prize: '$4,000', domain: 'Full Stack', registered: 65 },
+            { id: 4, title: 'CyberShield CTF Challenge', desc: 'Ethical hacking and campus network defense competition.', date: 'Dec 15, 2026', prize: '$2,500', domain: 'Cybersecurity', registered: 31 }
+        ];
+
+        let communityPosts = [
+            { id: 1, author: 'Aarav Patel', role: 'Student', domain: 'AI/ML', title: 'Built an LLM Study Companion for Finals', content: 'Our team fine-tuned an open-source model on past semester papers and lecture transcripts. Helped 200+ students prep for exams with zero hallucination issues!', likes: 18, comments: 4, time: '2 hours ago' },
+            { id: 2, author: 'Neha Sharma', role: 'Student', domain: 'Full Stack', title: 'React + Tailwind SaaS Boilerplate Experience', content: 'Participated in the Full Stack Sprint. Learned how to implement JWT authentication and clean modular component design.', likes: 24, comments: 7, time: 'Yesterday' }
+        ];
+
+        let studentDirectory = [
+            { name: 'Rahul Sharma', domain: 'Full Stack', exp: 'Intermediate', hackathons: 3, avatar: 'RS' },
+            { name: 'Aarav Patel', domain: 'AI/ML', exp: 'Expert', hackathons: 6, avatar: 'AP' },
+            { name: 'Neha Sharma', domain: 'Full Stack', exp: 'Beginner', hackathons: 1, avatar: 'NS' },
+            { name: 'Vikram Singh', domain: 'Web3', exp: 'Expert', hackathons: 5, avatar: 'VS' },
+            { name: 'Ananya Iyer', domain: 'Mobile', exp: 'Intermediate', hackathons: 2, avatar: 'AI' },
+            { name: 'Rohan Verma', domain: 'Cybersecurity', exp: 'Beginner', hackathons: 0, avatar: 'RV' }
+        ];
+
+        let professorRequests = [
+            { id: 1, student: 'Rahul Sharma', topic: 'AI Research Paper Guidance', details: 'Need mentorship on structuring our transformer model paper for IEEE submission.', status: 'Pending', professor: null },
+            { id: 2, student: 'Ananya Iyer', topic: 'Flutter App Architecture', details: 'Looking for advice on offline-first local SQLite sync in our campus navigation app.', status: 'Assigned', professor: 'Dr. Alan Turing' }
+        ];
+
+        let aiChatHistory = [];
+
+        /* ================= TOAST NOTIFICATION ================= */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-slate-900 text-white border-slate-800' : 'bg-rose-600 text-white border-rose-500';
+            toast.className = `px-4 py-3 rounded-2xl shadow-xl border text-xs font-bold flex items-center gap-3 transition-all transform translate-y-2 opacity-0 pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* ================= LOGIN & AUTH ================= */
+        let selectedLoginRole = 'student';
+
+        function switchLoginRole(role) {
+            selectedLoginRole = role;
+            const studentTab = document.getElementById('tab-login-student');
+            const managerTab = document.getElementById('tab-login-manager');
+            const studentFields = document.getElementById('student-extra-fields');
+            const loginBtnText = document.getElementById('login-btn-text');
+
+            if (role === 'student') {
+                studentTab.className = 'py-2.5 text-xs font-bold rounded-xl transition-all bg-indigo-600 text-white shadow-md';
+                managerTab.className = 'py-2.5 text-xs font-bold rounded-xl transition-all text-slate-400 hover:text-white';
+                studentFields.classList.remove('hidden');
+                loginBtnText.textContent = 'Sign In as Student';
+            } else {
+                managerTab.className = 'py-2.5 text-xs font-bold rounded-xl transition-all bg-purple-600 text-white shadow-md';
+                studentTab.className = 'py-2.5 text-xs font-bold rounded-xl transition-all text-slate-400 hover:text-white';
+                studentFields.classList.add('hidden');
+                loginBtnText.textContent = 'Sign In as Management';
+            }
+        }
+
+        function quickDemoLogin(role) {
+            if (role === 'student') {
+                currentUser = { name: 'Rahul Sharma', role: 'student', domain: 'Full Stack', experience: 'Intermediate' };
+            } else {
+                currentUser = { name: 'Dr. Helen Vance', role: 'manager', domain: 'Administration', experience: 'Expert' };
+            }
+            initAppSession();
+        }
+
+        function handleCustomLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('login-name-input').value.trim();
+            if (!name) return;
+
+            if (selectedLoginRole === 'student') {
+                const domain = document.getElementById('login-domain-input').value;
+                const exp = document.getElementById('login-exp-input').value;
+                currentUser = { name, role: 'student', domain, experience: exp };
+            } else {
+                currentUser = { name, role: 'manager', domain: 'Administration', experience: 'Expert' };
+            }
+            initAppSession();
+        }
+
+        function initAppSession() {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('main-app-view').classList.remove('hidden');
+
+            // Set Header Profile Info
+            document.getElementById('header-user-name').textContent = currentUser.name;
+            document.getElementById('user-avatar-initials').textContent = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            const roleBadge = document.getElementById('header-role-badge');
+            const subtitle = document.getElementById('header-user-subtitle');
+
+            if (currentUser.role === 'student') {
+                roleBadge.textContent = 'Student Portal';
+                roleBadge.className = 'px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase tracking-wider';
+                subtitle.textContent = `Student • ${currentUser.domain}`;
+                document.getElementById('dash-welcome-name').textContent = currentUser.name.split(' ')[0];
+                
+                // Build Student Nav Tabs
+                const navContainer = document.getElementById('nav-tabs-container');
+                navContainer.innerHTML = `
+                    <button onclick="switchTab('student-dashboard')" id="nav-student-dashboard" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-indigo-600 bg-white shadow-xs"><i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard</button>
+                    <button onclick="switchTab('student-hackathons')" id="nav-student-hackathons" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900"><i class="fa-solid fa-trophy mr-1.5 text-amber-500"></i> Hackathons</button>
+                    <button onclick="switchTab('student-community')" id="nav-student-community" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900"><i class="fa-solid fa-share-nodes mr-1.5 text-indigo-500"></i> Work Feed</button>
+                    <button onclick="switchTab('student-directory')" id="nav-student-directory" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900"><i class="fa-solid fa-users mr-1.5 text-emerald-500"></i> Peer Directory</button>
+                    <button onclick="switchTab('student-ai')" id="nav-student-ai" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900"><i class="fa-solid fa-robot mr-1.5 text-purple-500"></i> AI Mentor</button>
+                    <button onclick="switchTab('student-professors')" id="nav-student-professors" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900"><i class="fa-solid fa-user-tie mr-1.5 text-blue-500"></i> Prof Help</button>
+                `;
+                switchTab('student-dashboard');
+            } else {
+                roleBadge.textContent = 'Management Portal';
+                roleBadge.className = 'px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-purple-50 text-purple-700 border border-purple-200 uppercase tracking-wider';
+                subtitle.textContent = 'Faculty Coordinator';
+
+                // Build Manager Nav Tabs
+                const navContainer = document.getElementById('nav-tabs-container');
+                navContainer.innerHTML = `
+                    <button onclick="switchTab('manager-dashboard')" id="nav-manager-dashboard" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-purple-600 bg-white shadow-xs"><i class="fa-solid fa-shield-halved mr-1.5"></i> Management Hub</button>
+                `;
+                switchTab('manager-dashboard');
+            }
+
+            renderAllViews();
+            showToast(`Welcome to CampusHub, ${currentUser.name}!`);
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-app-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+            showToast('Successfully signed out.', 'success');
+        }
+
+        /* ================= NAVIGATION ROUTER ================= */
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            const target = document.getElementById('page-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            // Update active state in nav buttons
+            const buttons = document.querySelectorAll('#nav-tabs-container button');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick')?.includes(tabId)) {
+                    btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-indigo-600 bg-white shadow-xs';
+                } else {
+                    btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+                }
+            });
+        }
+
+        /* ================= RENDER FUNCTIONS ================= */
+        function renderAllViews() {
+            renderHackathons();
+            renderCommunityFeed();
+            renderDirectory();
+            renderProfessorRequests();
+            renderManagerDashboard();
+        }
+
+        // Hackathons
+        function renderHackathons() {
+            const grid = document.getElementById('hackathons-grid');
+            const preview = document.getElementById('dash-hackathons-preview');
+            const search = document.getElementById('hackathon-search')?.value.toLowerCase() || '';
+
+            const filtered = hackathonsData.filter(h => h.title.toLowerCase().includes(search) || h.domain.toLowerCase().includes(search));
+
+            grid.innerHTML = filtered.map(h => `
+                <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-all">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold text-[10px] rounded-full uppercase tracking-wider">${h.domain}</span>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-xl"><i class="fa-solid fa-trophy mr-1"></i>${h.prize}</span>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 text-base mb-1">${h.title}</h4>
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">${h.desc}</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-4 pt-3 border-t border-slate-100">
+                            <span><i class="fa-solid fa-calendar mr-1"></i>${h.date}</span>
+                            <span><i class="fa-solid fa-user-group mr-1"></i>${h.registered} teams</span>
+                        </div>
+                        <button onclick="registerHackathon(${h.id})" class="w-full py-2.5 bg-slate-900 hover:bg-indigo-600 text-white font-bold rounded-xl text-xs transition-all shadow-md">
+                            Register Team / Join
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            preview.innerHTML = hackathonsData.slice(0, 2).map(h => `
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 font-bold text-[10px] rounded-full">${h.domain}</span>
+                            <span class="text-xs font-bold text-emerald-600">${h.prize}</span>
+                        </div>
+                        <h5 class="font-bold text-slate-900 text-sm mb-1">${h.title}</h5>
+                        <p class="text-[11px] text-slate-500 line-clamp-1">${h.desc}</p>
+                    </div>
+                    <button onclick="registerHackathon(${h.id})" class="mt-3 py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[11px] font-bold transition-all">
+                        Join Event
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterHackathons() {
+            renderHackathons();
+        }
+
+        function registerHackathon(id) {
+            const h = hackathonsData.find(x => x.id === id);
+            if (h) {
+                h.registered++;
+                showToast(`Successfully registered for ${h.title}! Good luck!`);
+                renderHackathons();
+            }
+        }
+
+        // Community Posts / Work Sharing
+        function submitCommunityPost(event) {
+            event.preventDefault();
+            const title = document.getElementById('post-title').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+            const domain = document.getElementById('post-domain').value;
+
+            if (!title || !content) return;
+
+            const newPost = {
+                id: Date.now(),
+                author: currentUser.name,
+                role: currentUser.role === 'manager' ? 'Faculty' : 'Student',
+                domain: domain,
+                title: title,
+                content: content,
+                likes: 0,
+                comments: 0,
+                time: 'Just now'
+            };
+
+            communityPosts.unshift(newPost);
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            showToast('Successfully published your work experience to the feed!');
+            renderCommunityFeed();
+            document.getElementById('stat-post-count').textContent = communityPosts.length + ' Shared';
+        }
+
+        function renderCommunityFeed() {
+            const container = document.getElementById('community-feed-container');
+            const filterDomain = document.getElementById('feed-filter-domain')?.value || 'All';
+
+            const filtered = communityPosts.filter(p => filterDomain === 'All' || p.domain === filterDomain);
+            document.getElementById('feed-count-indicator').textContent = `${filtered.length} Posts`;
+
+            container.innerHTML = filtered.map(p => `
+                <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 text-white font-bold flex items-center justify-center text-xs">
+                                ${p.author.split(' ').map(n => n[0]).join('').substring(0,2)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900">${p.author} <span class="font-normal text-slate-500">• ${p.role}</span></h4>
+                                <p class="text-[10px] text-slate-400">${p.time}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold text-[10px] rounded-full uppercase tracking-wider">${p.domain}</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 text-sm mb-1">${p.title}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">${p.content}</p>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-500">
+                        <button onclick="likePost(${p.id})" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
+                            <i class="fa-solid fa-heart text-rose-500"></i> <span>${p.likes} Likes</span>
+                        </button>
+                        <button class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
+                            <i class="fa-solid fa-comment text-indigo-500"></i> <span>${p.comments} Comments</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Also render in Manager Dashboard
+            const mgmtPosts = document.getElementById('mgmt-student-posts-list');
+            if (mgmtPosts) {
+                mgmtPosts.innerHTML = communityPosts.map(p => `
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-xs text-slate-900">${p.author}</span>
+                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded-full">${p.domain}</span>
+                        </div>
+                        <h4 class="font-bold text-xs text-slate-800">${p.title}</h4>
+                        <p class="text-[11px] text-slate-600 line-clamp-2">${p.content}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function likePost(id) {
+            const p = communityPosts.find(x => x.id === id);
+            if (p) {
+                p.likes++;
+                renderCommunityFeed();
+            }
+        }
+
+        // Student Directory & Categorization
+        function renderDirectory() {
+            const grid = document.getElementById('student-directory-grid');
+            const filterExp = document.getElementById('dir-filter-exp')?.value || 'All';
+
+            const filtered = studentDirectory.filter(s => filterExp === 'All' || s.exp.includes(filterExp));
+
+            grid.innerHTML = filtered.map(s => `
+                <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm shadow-sm">
+                                ${s.avatar}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900">${s.name}</h4>
+                                <span class="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full">${s.domain}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Hackathon Experience:</span>
+                                <span class="font-bold text-slate-800">${s.exp}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Hackathons Attended:</span>
+                                <span class="font-bold text-indigo-600">${s.hackathons} Events</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="showToast('Connected with ${s.name} successfully!')" class="mt-4 w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold rounded-xl text-xs transition-all">
+                        Connect & Collaborate
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Professor Requests
+        function submitProfessorRequest(event) {
+            event.preventDefault();
+            const topic = document.getElementById('prof-req-topic').value.trim();
+            const details = document.getElementById('prof-req-details').value.trim();
+
+            if (!topic || !details) return;
+
+            const newReq = {
+                id: Date.now(),
+                student: currentUser.name,
+                topic: topic,
+                details: details,
+                status: 'Pending',
+                professor: null
+            };
+
+            professorRequests.unshift(newReq);
+            document.getElementById('prof-req-topic').value = '';
+            document.getElementById('prof-req-details').value = '';
+            showToast('Professor guidance request submitted to management!');
+            renderProfessorRequests();
+            renderManagerDashboard();
+        }
+
+        function renderProfessorRequests() {
+            const list = document.getElementById('student-prof-requests-list');
+            if (!list) return;
+
+            const userReqs = professorRequests.filter(r => r.student === currentUser.name);
+
+            if (userReqs.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No requests submitted yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = userReqs.map(r => `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-xs text-slate-900">${r.topic}</h4>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">${r.status}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600">${r.details}</p>
+                    ${r.professor ? `<p class="text-[11px] font-bold text-indigo-600 pt-1 border-t border-slate-200"><i class="fa-solid fa-user-tie mr-1"></i> Assigned Mentor: ${r.professor}</p>` : ''}
+                </div>
+            `).join('');
+            
+            document.getElementById('stat-req-count').textContent = userReqs.filter(r => r.status === 'Pending').length + ' Pending';
+        }
+
+        // Management Dashboard & Request Fulfillment
+        function renderManagerDashboard() {
+            const list = document.getElementById('mgmt-prof-requests-list');
+            if (!list) return;
+
+            document.getElementById('mgmt-stat-pending').textContent = professorRequests.filter(r => r.status === 'Pending').length;
+
+            list.innerHTML = professorRequests.map(r => `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">${r.student}</span>
+                            <h4 class="font-bold text-xs text-slate-900">${r.topic}</h4>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">${r.status}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600">${r.details}</p>
+                    
+                    ${r.status === 'Pending' ? `
+                        <div class="flex items-center gap-2 pt-2 border-t border-slate-200">
+                            <select id="prof-assign-${r.id}" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700">
+                                <option value="Dr. Alan Turing">Dr. Alan Turing (AI/ML)</option>
+                                <option value="Dr. Grace Hopper">Dr. Grace Hopper (Full Stack)</option>
+                                <option value="Dr. Tim Berners-Lee">Dr. Tim Berners-Lee (Web3)</option>
+                            </select>
+                            <button onclick="assignProfessor(${r.id})" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all">
+                                Assign Mentor
+                            </button>
+                        </div>
+                    ` : `
+                        <p class="text-[11px] font-bold text-emerald-600 pt-1 border-t border-slate-200"><i class="fa-solid fa-circle-check mr-1"></i> Assigned to: ${r.professor}</p>
+                    `}
+                </div>
+            `).join('');
+
+            renderCommunityFeed();
+        }
+
+        function assignProfessor(id) {
+            const profSelect = document.getElementById(`prof-assign-${id}`);
+            const profName = profSelect ? profSelect.value : 'Dr. Alan Turing';
+            const req = professorRequests.find(r => r.id === id);
+            if (req) {
+                req.status = 'Assigned';
+                req.professor = profName;
+                showToast(`Assigned ${profName} to student ${req.student}!`);
+                renderManagerDashboard();
+                renderProfessorRequests();
+            }
+        }
+
+        /* ================= AI CHATBOT (GEMINI / CLAUDE STYLE) ================= */
+        function sendPresetPrompt(text) {
+            document.getElementById('ai-user-input').value = text;
+        }
+
+        function clearAIChat() {
+            const container = document.getElementById('ai-chat-messages');
+            container.innerHTML = `
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-xs max-w-xl shadow-2xs text-xs text-slate-800 leading-relaxed">
+                        Chat reset! How else can I help you today?
+                    </div>
+                </div>
+            `;
+            aiChatHistory = [];
+            showToast('AI Chat reset.');
+        }
+
+        async function handleAIChatSubmit(event) {
+            event.preventDefault();
+            const inputField = document.getElementById('ai-user-input');
+            const prompt = inputField.value.trim();
+            if (!prompt) return;
+
+            const container = document.getElementById('ai-chat-messages');
+
+            // Append User Message
+            container.innerHTML += `
+                <div class="flex gap-3 justify-end">
+                    <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-xs max-w-xl shadow-2xs text-xs leading-relaxed">
+                        ${prompt}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-indigo-700 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                        ${currentUser.name.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                    </div>
+                </div>
+            `;
+            inputField.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Typing Indicator
+            const typingId = 'typing-' + Date.now();
+            container.innerHTML += `
+                <div id="${typingId}" class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-xs shadow-2xs text-xs text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-purple-400 animate-bounce"></span>
+                        <span class="w-2 h-2 rounded-full bg-purple-500 animate-bounce delay-100"></span>
+                        <span class="w-2 h-2 rounded-full bg-purple-600 animate-bounce delay-200"></span>
+                        <span class="ml-1 text-[11px] font-medium">Gemini AI is thinking...</span>
+                    </div>
+                </div>
+            `;
+            container.scrollTop = container.scrollHeight;
+
+            // Generate AI Response (Simulating real Gemini / Claude intelligence)
+            setTimeout(() => {
+                document.getElementById(typingId)?.remove();
+
+                let aiReply = getSimulatedAIReply(prompt);
+
+                container.innerHTML += `
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-xs max-w-xl shadow-2xs text-xs text-slate-800 leading-relaxed space-y-2">
+                            <p>${aiReply}</p>
+                        </div>
+                    </div>
+                `;
+                container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        function getSimulatedAIReply(prompt) {
+            const lower = prompt.toLowerCase();
+            if (lower.includes('pitch') || lower.includes('hackathon')) {
+                return "To deliver a winning 3-minute hackathon pitch: <strong>1) Hook (0-30s):</strong> State the real-world pain point clearly with stats. <strong>2) Solution (30-90s):</strong> Live demo or clean workflow of what you built. <strong>3) Tech Stack & Impact (90-180s):</strong> Highlight your architecture, scalability, and how CampusHub peers can collaborate on it!";
+            } else if (lower.includes('react') || lower.includes('state')) {
+                return "In React, state represents data that changes over time and triggers component re-renders. For local component state use <code>useState</code>, and for sharing state across multiple views in CampusHub apps, consider the Context API or lightweight state management stores.";
+            } else if (lower.includes('ai') || lower.includes('model') || lower.includes('open-source')) {
+                return "For hackathons, popular lightweight open-source models include <strong>Llama-3-8B</strong> and <strong>Mistral-7B</strong> via Ollama or Groq API for lightning-fast inference without breaking API budgets.";
+            } else {
+                return `That is a fantastic question regarding <strong>"${prompt}"</strong>! When tackling this in your project or hackathon, ensure you break down the architectural requirements into modular components, test edge cases thoroughly, and leverage CampusHub's peer feed to collaborate with students in your domain!`;
+            }
+        }
+    </script>
+</body>
+</html>
